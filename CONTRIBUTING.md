@@ -1,6 +1,7 @@
 Contributions guidelines:
 
-- Use 2 spaces indentation
+- No code will be merged if jslint doesn't like it.
+- Use tabs and set them to whatever spacing you like *in your editor.*
 - If it is a bug, try to add an automated test that reproduces it in the
   test/issues.coffee, following the conventions already adopted.
 - If it is a new feature, try to add automated tests for it.
