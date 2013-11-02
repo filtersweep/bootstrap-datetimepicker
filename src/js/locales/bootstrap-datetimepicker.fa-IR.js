@@ -3,7 +3,7 @@
  * Mohammad Abdoli Rad <m.abdolirad@gmail.com>
  */
 (function($) {
-    $.fn.datetimepicker.dates['fa-IR'] = {
+    $.fn.datetimepicker.defaults.dates['fa-IR'] = {
         days: ["یکشنبه", "دوشنبه", "سه شنبه", "چهارشنبه", "پنجشنبه", "جمعه", "شنبه", "یکشنبه"],
         daysShort: ["یکشنبه", "دوشنبه", "سه شنبه", "چهارشنبه", "پنجشنبه", "جمعه", "شنبه", "یکشنبه"],
         daysMin: ["ش۱ ۱", "۲ ش", "۳ ش", "۴ ش", "۵ ش", "ج", "ش", "۱ ش"],

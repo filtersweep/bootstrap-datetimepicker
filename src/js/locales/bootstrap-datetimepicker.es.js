@@ -3,7 +3,7 @@
  * Bruno Bonamin <bruno.bonamin@gmail.com>
  */
 ;(function($){
-	$.fn.datetimepicker.dates['es'] = {
+	$.fn.datetimepicker.defaults.dates['es'] = {
 		days: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"],
 		daysShort: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"],
 		daysMin: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"],

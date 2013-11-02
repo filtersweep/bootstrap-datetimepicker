@@ -3,7 +3,7 @@
  * René Bischoff <http://github.com/Fjandin>
  */
 ;(function($){
-	$.fn.datetimepicker.dates['fo'] = {
+	$.fn.datetimepicker.defaults.dates['fo'] = {
 		days: ["Sunnudagur", "Mánadagur", "Týsdagur", "Mikudagur", "Hósdagur", "Fríggjadagur", "Leygardagur", "Sunnudagur"],
 		daysShort: ["Sun", "Mán", "Týs", "Mik", "Hós", "Frí", "Ley", "Sun"],
 		daysMin: ["Su", "Má", "Tý", "Mi", "Hó", "Fr", "Le", "Su"],

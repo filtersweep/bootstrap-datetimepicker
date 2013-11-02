@@ -3,7 +3,7 @@
  * Zsolt Sztupak <mail@sztupy.hu>
  */
 ;(function($){
-	$.fn.datetimepicker.dates['hu'] = {
+	$.fn.datetimepicker.defaults.dates['hu'] = {
 		days: ["Vasárnap", "Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat", "Vasárnap"],
 		daysShort: ["Vas", "Hét", "Ked", "Sze", "Csü", "Pén", "Szo", "Vas"],
 		daysMin: ["V", "H", "K", "Sze", "Cs", "P", "Szo", "V"],

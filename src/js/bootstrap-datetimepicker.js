@@ -36,31 +36,7 @@
 		formatComponent = null,
 		formatReplacer = null,
 		DPGlobal = null,
-		TPGlobal = null,
-		dates = null;
-
-	dates = {
-		en: {
-			days: [
-				"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
-				"Friday", "Saturday", "Sunday"
-			],
-			daysShort: [
-				"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"
-			],
-			daysMin: [
-				"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"
-			],
-			months: [
-				"January", "February", "March", "April", "May", "June",
-				"July", "August", "September", "October", "November", "December"
-			],
-			monthsShort: [
-				"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
-				"Aug", "Sep", "Oct", "Nov", "Dec"
-			]
-		}
-	};
+		TPGlobal = null;
 
 	DPGlobal = (function () {
 		var headTemplate = '<thead>' +
@@ -186,7 +162,7 @@
 		};
 	}());
 
-	function buildFormatter() {
+	function buildFormatter(dates, lang) {
 		var k = null,
 			keys = [],
 			makeDateFormatComponent = function (prop, pattern) {
@@ -200,10 +176,10 @@
 
 		dateFormatComponents = (function () {
 			var result = null,
-				longDays = dates[DEFAULT_LANGUAGE].days.join("|"),
-				shortDays = dates[DEFAULT_LANGUAGE].daysShort.join("|"),
-				longMonths = dates[DEFAULT_LANGUAGE].months.join("|"),
-				shortMonths = dates[DEFAULT_LANGUAGE].monthsShort.join("|");
+				longDays = dates[lang].days.join("|"),
+				shortDays = dates[lang].daysShort.join("|"),
+				longMonths = dates[lang].months.join("|"),
+				shortMonths = dates[lang].monthsShort.join("|");
 
 			result = {
 				dd: makeDateFormatComponent('UTCDate', '(0?[1-9]|[1-2][0-9]|3[0-1])'),
@@ -350,10 +326,17 @@
 					return $el.find('input[type="text"]').data(key);
 				};
 
-			buildFormatter();
-
 			this.options = options;
 			this.$element = $(element);
+			this.isInput = this.$element.is('input[type="text"]');
+
+			language = findData(this.isInput, this.$element, "language");
+			if (!language) {
+				language = options.language;
+			}
+			this.language = this.options.dates.hasOwnProperty(language) ? language : DEFAULT_LANGUAGE;
+			buildFormatter(this.options.dates, this.language);
+
 			this.closeOnSelect = findData(this.isInput, this.$element, "close-on-select") || options.closeOnSelect;
 
 			pickDate = findData(this.isInput, this.$element, "pick-date");
@@ -368,12 +351,6 @@
 			} else {
 				this.pickTime = options.pickTime;
 			}
-			language = findData(this.isInput, this.$element, "language");
-			if (!language) {
-				language = options.language;
-			}
-			this.language = dates.hasOwnProperty(language) ? language : DEFAULT_LANGUAGE;
-			this.isInput = this.$element.is('input[type="text"]');
 			this.component = false;
 			if (this.$element.find('.input-append') || this.$element.find('.input-prepend')) {
 				this.component = this.$element.find('.add-on');
@@ -697,7 +674,7 @@
 				html = $('<tr>');
 
 			for (i = this.weekStart; i < this.weekStart + 7; i += 1) {
-				html.append('<th class="dow">' + dates[this.language].daysMin[i % 7] + '</th>');
+				html.append('<th class="dow">' + this.options.dates[this.language].daysMin[i % 7] + '</th>');
 			}
 			this.$widget.find('.datepicker-days thead').append(html);
 		},
@@ -707,7 +684,7 @@
 				i = 0;
 
 			for (i = 0; i < 12; i += 1) {
-				html += '<span class="month">' + dates[this.language].monthsShort[i] + '</span>';
+				html += '<span class="month">' + this.options.dates[this.language].monthsShort[i] + '</span>';
 			}
 			this.$widget.find('.datepicker-months td').append(html);
 		},
@@ -742,7 +719,7 @@
 			this.$widget.find('.datepicker-days').find('.disabled').removeClass('disabled');
 			this.$widget.find('.datepicker-months').find('.disabled').removeClass('disabled');
 			this.$widget.find('.datepicker-years').find('.disabled').removeClass('disabled');
-			this.$widget.find('.datepicker-days th:eq(1)').text(dates[this.language].months[month] + ' ' + year);
+			this.$widget.find('.datepicker-days th:eq(1)').text(this.options.dates[this.language].months[month] + ' ' + year);
 
 			prevMonth = getUTCDate(year, month - 1, 28, 0, 0, 0, 0);
 			day = DPGlobal.getDaysInMonth(prevMonth.getUTCFullYear(), prevMonth.getUTCMonth());
@@ -1303,16 +1280,16 @@
 							rv = rv.toString().substr(2);
 
 						} else if (property === 'LongDay') {
-							rv = dates[self.language].days[d.getUTCDay()];
+							rv = self.options.dates[self.language].days[d.getUTCDay()];
 
 						} else if (property === 'ShortDay') {
-							rv = dates[self.language].daysShort[d.getUTCDay()];
+							rv = self.options.dates[self.language].daysShort[d.getUTCDay()];
 
 						} else if (property === 'LongMonth') {
-							rv = dates[self.language].months[d.getUTCMonth()];
+							rv = self.options.dates[self.language].months[d.getUTCMonth()];
 
 						} else if (property === 'ShortMonth') {
-							rv = dates[self.language].monthsShort[d.getUTCMonth()];
+							rv = self.options.dates[self.language].monthsShort[d.getUTCMonth()];
 
 						} else {
 							methodName = 'get' + property;
@@ -1417,9 +1394,9 @@
 			if (parsed.UTCMonth) {
 				month = parsed.UTCMonth - 1;
 			} else if (parsed.ShortMonth) {
-				month = dates[this.language].monthsShort.indexOf(parsed.ShortMonth);
+				month = this.options.dates[this.language].monthsShort.indexOf(parsed.ShortMonth);
 			} else if (parsed.LongMonth) {
-				month = dates[this.language].months.indexOf(parsed.LongMonth);
+				month = this.options.dates[this.language].months.indexOf(parsed.LongMonth);
 			}
 			if (month < 0) {
 				month = 0;
@@ -1447,10 +1424,10 @@
 			result = getUTCDate(year, month, date, hours, minutes, seconds, milliseconds);
 
 			if (parsed.ShortDay) {
-				weekday = dates[this.language].daysShort.indexOf(parsed.ShortDay);
+				weekday = this.options.dates[this.language].daysShort.indexOf(parsed.ShortDay);
 			}
 			if (parsed.LongDay) {
-				weekday = dates[this.language].days.indexOf(parsed.LongDay);
+				weekday = this.options.dates[this.language].days.indexOf(parsed.LongDay);
 			}
 			if (weekday >= 0) {
 				date += (weekday - result.getDay());
@@ -1670,8 +1647,6 @@
 		});
 	};
 
-	$.fn.datetimepicker.dates = dates;
-
 	$.fn.datetimepicker.defaults = {
 		maskInput: false,
 		pickDate: true,
@@ -1681,8 +1656,31 @@
 		startDate: -Infinity,
 		endDate: Infinity,
 		collapse: true,
-		closeOnSelect: true		
+		closeOnSelect: true,
+		dates: {
+			"en": {
+				days: [
+					"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
+					"Friday", "Saturday", "Sunday"
+				],
+				daysShort: [
+					"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"
+				],
+				daysMin: [
+					"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"
+				],
+				months: [
+					"January", "February", "March", "April", "May", "June",
+					"July", "August", "September", "October", "November", "December"
+				],
+				monthsShort: [
+					"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
+					"Aug", "Sep", "Oct", "Nov", "Dec"
+				]
+			}
+		}
 	};
+
 	$.fn.datetimepicker.Constructor = DateTimePicker;
 
 }(window, window.document, window.jQuery));
