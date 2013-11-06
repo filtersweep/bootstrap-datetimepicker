@@ -235,20 +235,20 @@
 		return new Date(Date.UTC.apply(Date, arguments));
 	}
 
-	function getTemplate(timeIcon, pickDate, pickTime, is12Hours, showSeconds, collapse) {
-		if (pickDate && pickTime) {
+	function getTemplate(options) {
+		if (options.pickDate && options.pickTime) {
 			return (
 				'<div class="bootstrap-datetimepicker-widget dropdown-menu pull-right">' +
 					'<ul>' +
-					'<li' + (collapse ? ' class="collapse in"' : '') + '>' +
+					'<li' + (options.collapse ? ' class="collapse in"' : '') + '>' +
 					'<div class="datepicker">' +
 					DPGlobal.template +
 					'</div>' +
 					'</li>' +
-					'<li class="picker-switch accordion-toggle"><a><i class="' + timeIcon + '"></i></a></li>' +
-					'<li' + (collapse ? ' class="collapse"' : '') + '>' +
+					'<li class="picker-switch accordion-toggle"><a><i class="' + options.timeIcon + '"></i></a></li>' +
+					'<li' + (options.collapse ? ' class="collapse"' : '') + '>' +
 					'<div class="timepicker">' +
-					TPGlobal.getTemplate(is12Hours, showSeconds) +
+					TPGlobal.getTemplate(options.is12Hours, options.showSeconds) +
 					'</div>' +
 					'</li>' +
 					'</ul>' +
@@ -256,11 +256,11 @@
 			);
 		}
 
-		if (pickTime) {
+		if (options.pickTime) {
 			return (
 				'<div class="bootstrap-datetimepicker-widget dropdown-menu">' +
 					'<div class="timepicker">' +
-					TPGlobal.getTemplate(is12Hours, showSeconds) +
+					TPGlobal.getTemplate(options.is12Hours, options.showSeconds) +
 					'</div>' +
 					'</div>'
 			);
@@ -385,7 +385,14 @@
 				icon.removeClass(this.timeIcon);
 				icon.addClass(this.dateIcon);
 			}
-			this.$widget = $(getTemplate(this.timeIcon, this.pickDate, this.pickTime, options.pick12HourFormat, options.pickSeconds, options.collapse)).appendTo("body");
+			this.$widget = $(getTemplate({
+				timeIcon: this.timeIcon, 
+				pickDate: this.pickDate, 
+				pickTime: this.pickTime, 
+				is12Hours: options.pick12HourFormat, 
+				showSeconds: options.pickSeconds, 
+				collapse: options.collapse
+			})).appendTo("body");
 			this.minViewMode = options.minViewMode || this.$element.data('date-minviewmode') || 0;
 			if (typeof this.minViewMode === 'string') {
 				switch (this.minViewMode) {
@@ -606,7 +613,7 @@
 
 			if (this.options.orientation === 'left') {
 				this.$widget.addClass('left-oriented');
-				offset.left   = offset.left - this.$widget.width() + 20;
+				offset.left = offset.left - this.$widget.width() + 20;
 			}
 
 			if (this.priv_isInFixed()) {
@@ -622,6 +629,13 @@
 			} else {
 				offset.right = 'auto';
 				this.$widget.removeClass('pull-right');
+			}
+
+			if ($window.height() < offset.top + this.$widget.outerHeight()) {
+				this.$widget.addClass("bootstrap-datetimepicker-widget-dropup");
+				offset.top = offset.top - this.$widget.outerHeight() - this.$element.height();
+			} else {
+				this.$widget.removeClass("bootstrap-datetimepicker-widget-dropup");
 			}
 
 			this.$widget.css({
